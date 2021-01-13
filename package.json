@@ -36,7 +36,9 @@
     "typescript": "^4.1.3"
   },
   "scripts": {
+    "build": "tsc",
     "dev": "cross-env NODE_ENV=development tsnd -r tsconfig-paths/register --respawn src/shared/infra/http/server.ts",
-    "test": "jest --passWithNoTests"
+    "test": "cross-env NODE_ENV=development jest --passWithNoTests --runInBand --detectOpenHandle",
+    "typeorm": "cross-env NODE_ENV=development ts-node-dev -r tsconfig-paths/register ./node_modules/typeorm/cli.js --config src/config/ormconfig.ts",
   }
 }
