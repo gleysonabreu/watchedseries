@@ -13,6 +13,8 @@ services:
     volumes:
       - .:/home/watchedseries
       - /home/watchedseries/node_modules
+    environment:
+      TYPEORM_HOST: database
 
   database:
     container_name: watchedseries_db
