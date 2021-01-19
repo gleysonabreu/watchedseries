@@ -1,5 +1,10 @@
 import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
+import { ValidationError } from 'yup';
 import AppError from './AppError';
+
+interface ValidationErrors {
+  [key: string]: string[];
+}
 
 const AppHandleError: ErrorRequestHandler = (
   error: Error,
@@ -11,6 +16,19 @@ const AppHandleError: ErrorRequestHandler = (
     return response.status(error.statusCode).json({
       status: 'Error',
       message: error.message,
+    });
+  }
+
+  if (error instanceof ValidationError) {
+    const errors: ValidationErrors = {};
+
+    error.inner.forEach(err => {
+      if (err.path) errors[err.path] = err.errors;
+    });
+
+    return response.status(400).json({
+      message: 'Validation fails',
+      errors,
     });
   }
 
