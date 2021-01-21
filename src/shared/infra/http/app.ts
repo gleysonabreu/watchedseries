@@ -1,7 +1,8 @@
 import 'reflect-metadata';
+import 'express-async-errors';
+import '@shared/container';
 
 import express from 'express';
-import 'express-async-errors';
 import cors from 'cors';
 import connection from '@shared/infra/typeorm/connection';
 import AppHandleError from '../../errors/AppHandleError';
