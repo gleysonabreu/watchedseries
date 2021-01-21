@@ -16,5 +16,6 @@ serieRouter.post(
 );
 serieRouter.delete('/:id', serieController.delete);
 serieRouter.get('/', serieController.index);
+serieRouter.get('/:id', serieController.get);
 
 export default serieRouter;

@@ -136,4 +136,33 @@ describe('Serie', () => {
       ]),
     );
   });
+
+  it('should return serie with valid uuid', async () => {
+    const serieInfo = await factory.factorySerie();
+    const createSerie = container.resolve(CreateSerieService);
+    const serie = await createSerie.execute(serieInfo);
+
+    const response = await supertest(app).get(`/serie/${serie.id}`);
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        title: serie.title,
+        duration: serie.duration,
+        status: serie.status,
+        synopsis: serie.synopsis,
+      }),
+    );
+  });
+
+  it('should not return any serie with invalid uuid', async () => {
+    const response = await supertest(app).get('/serie/invalid-uuid');
+    expect(response.status).toBe(400);
+  });
+
+  it('should not return any serie if uuid does not exist', async () => {
+    const response = await supertest(app).get(
+      '/serie/61d9b1dc-262e-4e10-aca3-6780c81aa8b1',
+    );
+    expect(response.status).toBe(400);
+  });
 });
