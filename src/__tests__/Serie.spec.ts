@@ -116,4 +116,24 @@ describe('Serie', () => {
     const response = await supertest(app).delete('/serie/invalid-uuid');
     expect(response.status).toBe(400);
   });
+
+  it('should return all series', async () => {
+    const serieInfo = await factory.factorySerie();
+    const createSerie = container.resolve(CreateSerieService);
+    const serie = await createSerie.execute(serieInfo);
+
+    const response = await supertest(app).get('/serie');
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          title: serie.title,
+          duration: serie.duration,
+          status: serie.status,
+          synopsis: serie.synopsis,
+        }),
+      ]),
+    );
+  });
 });
