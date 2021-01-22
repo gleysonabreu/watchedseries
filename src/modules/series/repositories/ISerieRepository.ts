@@ -7,4 +7,5 @@ export default interface ISerieRepository {
   findById(id: string): Promise<Serie | undefined>;
   remove(serie: Serie): Promise<void>;
   findAll(): Promise<Serie[]>;
+  update(serie: Serie): Promise<Serie>;
 }

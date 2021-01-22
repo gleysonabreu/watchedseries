@@ -165,4 +165,93 @@ describe('Serie', () => {
     );
     expect(response.status).toBe(400);
   });
+
+  it('should update an serie with valid information', async () => {
+    const serieInfo = await factory.factorySerie();
+    const createSerie = container.resolve(CreateSerieService);
+    const serie = await createSerie.execute(serieInfo);
+
+    const response = await supertest(app).put(`/serie/${serie.id}`).send({
+      title: 'New title',
+      duration: serie.duration,
+      status: serie.status,
+      synopsis: serie.synopsis,
+      launch: serie.launch,
+      finished: serie.finished,
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        title: 'New title',
+        duration: serie.duration,
+        status: serie.status,
+        synopsis: serie.synopsis,
+      }),
+    );
+  });
+
+  it('should not update an serie without missing fields', async () => {
+    const serieInfo = await factory.factorySerie();
+    const createSerie = container.resolve(CreateSerieService);
+    const serie = await createSerie.execute(serieInfo);
+
+    const response = await supertest(app).put(`/serie/${serie.id}`).send({
+      title: 'New title',
+      duration: serie.duration,
+      status: serie.status,
+      synopsis: serie.synopsis,
+    });
+
+    expect(response.status).toBe(400);
+  });
+
+  it('should not update an serie if title already exist', async () => {
+    const serieInfo = await factory.factorySerie();
+    const createSerie = container.resolve(CreateSerieService);
+    const serie = await createSerie.execute(serieInfo);
+    const serieVerify = await createSerie.execute({
+      ...serieInfo,
+      title: 'Qualquer',
+    });
+
+    const response = await supertest(app).put(`/serie/${serie.id}`).send({
+      title: serieVerify.title,
+      duration: serie.duration,
+      status: serie.status,
+      synopsis: serie.synopsis,
+      launch: serie.launch,
+      finished: serie.finished,
+    });
+
+    expect(response.status).toBe(400);
+  });
+
+  it('should not update any serie if uuid does not exist', async () => {
+    const response = await supertest(app)
+      .put(`/serie/61d9b1dc-262e-4e10-aca3-6780c81aa8b1`)
+      .send({
+        title: 'New title',
+        duration: 40,
+        status: 'Aguardando eps',
+        synopsis: 'Qualquer coisa',
+        launch: '02-21-1998',
+        finished: '08-31-2020',
+      });
+
+    expect(response.status).toBe(400);
+  });
+
+  it('should not update any serie if uuid is invalid', async () => {
+    const response = await supertest(app).put(`/serie/uuid-invalid`).send({
+      title: 'New title',
+      duration: 40,
+      status: 'Aguardando eps',
+      synopsis: 'Qualquer coisa',
+      launch: '02-21-1998',
+      finished: '08-31-2020',
+    });
+
+    expect(response.status).toBe(400);
+  });
 });
