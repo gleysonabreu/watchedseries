@@ -30,6 +30,16 @@ class SerieRepository implements ISerieRepository {
   public async remove(serie: Serie): Promise<void> {
     await this.ormRepository.remove(serie);
   }
+
+  public async findAll(): Promise<Serie[]> {
+    const series = await this.ormRepository.find();
+    return series;
+  }
+
+  public async update(serie: Serie): Promise<Serie> {
+    const updateSerie = await this.ormRepository.save(serie);
+    return updateSerie;
+  }
 }
 
 export default SerieRepository;

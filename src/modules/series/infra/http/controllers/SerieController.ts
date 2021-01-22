@@ -3,6 +3,9 @@ import { Request, Response } from 'express';
 
 import CreateSerieService from '@modules/series/services/CreateSerieService';
 import DeleteSerieService from '@modules/series/services/DeleteSerieService';
+import FindAllSeriesService from '@modules/series/services/FindAllSeriesService';
+import FindSerieByIdService from '@modules/series/services/FindSerieByIdService';
+import UpdateSerieService from '@modules/series/services/UpdateSerieService';
 import serieView from '../views/serie.view';
 
 class SerieController {
@@ -38,6 +41,46 @@ class SerieController {
     await deleteSerieService.execute({ id });
 
     return response.sendStatus(204);
+  }
+
+  async index(request: Request, response: Response): Promise<Response> {
+    const findAllSeriesService = container.resolve(FindAllSeriesService);
+    const series = await findAllSeriesService.execute();
+    return response.status(200).json(serieView.renderMany(series));
+  }
+
+  async get(request: Request, response: Response): Promise<Response> {
+    const { id } = request.params;
+
+    const findSerieByIdService = container.resolve(FindSerieByIdService);
+    const serie = await findSerieByIdService.execute({ id });
+
+    return response.status(200).json(serieView.render(serie));
+  }
+
+  async update(request: Request, response: Response): Promise<Response> {
+    const {
+      title,
+      duration,
+      status,
+      synopsis,
+      launch,
+      finished,
+    } = request.body;
+    const { id } = request.params;
+
+    const updateSerieService = container.resolve(UpdateSerieService);
+    const updateSerie = await updateSerieService.execute({
+      title,
+      duration,
+      status,
+      synopsis,
+      launch,
+      finished,
+      id,
+    });
+
+    return response.status(200).json(serieView.render(updateSerie));
   }
 }
 
