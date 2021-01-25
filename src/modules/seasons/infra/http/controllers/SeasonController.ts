@@ -3,6 +3,7 @@ import { container } from 'tsyringe';
 import CreateSeasonService from '@modules/seasons/services/CreateSeasonService';
 import DeleteSeasonService from '@modules/seasons/services/DeleteSeasonService';
 import FindSeasonByIdService from '@modules/seasons/services/FindSeasonByIdService';
+import FindAllSeasonsService from '@modules/seasons/services/FindAllSeasonsService';
 import seasonView from '../views/season.view';
 
 class SeasonController {
@@ -29,6 +30,13 @@ class SeasonController {
     const season = await findSeasonByIdService.execute({ id });
 
     return response.json(seasonView.render(season));
+  }
+
+  async getAll(request: Request, response: Response): Promise<Response> {
+    const findAllSeasonsService = container.resolve(FindAllSeasonsService);
+    const seasons = await findAllSeasonsService.execute();
+
+    return response.json(seasonView.renderMany(seasons));
   }
 }
 

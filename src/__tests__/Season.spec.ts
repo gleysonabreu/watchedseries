@@ -125,4 +125,27 @@ describe('Season', () => {
     const response = await supertest(app).get('/season/invalid-uuid');
     expect(response.status).toBe(400);
   });
+
+  it('should return all seasons', async () => {
+    const serie = await factory.factorySerie();
+    const createSerie = container.resolve(CreateSerieService);
+    const createSeason = container.resolve(CreateSeasonService);
+    const serieCreated = await createSerie.execute(serie);
+    const seasonCreated = await createSeason.execute({
+      name: '1° Season',
+      serieId: serieCreated.id,
+    });
+
+    const response = await supertest(app).get('/season');
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: seasonCreated.id,
+          serieId: seasonCreated.serieId,
+          name: seasonCreated.name,
+        }),
+      ]),
+    );
+  });
 });

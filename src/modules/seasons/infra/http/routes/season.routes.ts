@@ -7,5 +7,6 @@ const seasonController = new SeasonController();
 seasonRouter.post('/', seasonController.store);
 seasonRouter.delete('/:id', seasonController.delete);
 seasonRouter.get('/:id', seasonController.get);
+seasonRouter.get('/', seasonController.getAll);
 
 export default seasonRouter;
