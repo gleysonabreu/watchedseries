@@ -15,6 +15,15 @@ class SeasonRepository implements ISeasonRepository {
     const seasonCreated = await this.ormRepository.save(createSeason);
     return seasonCreated;
   }
+
+  public async delete(season: Season): Promise<void> {
+    await this.ormRepository.remove(season);
+  }
+
+  public async findById(id: string): Promise<Season | undefined> {
+    const serie = await this.ormRepository.findOne(id);
+    return serie;
+  }
 }
 
 export default SeasonRepository;
