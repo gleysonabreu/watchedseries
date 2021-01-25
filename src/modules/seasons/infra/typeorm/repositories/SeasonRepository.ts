@@ -21,7 +21,9 @@ class SeasonRepository implements ISeasonRepository {
   }
 
   public async findById(id: string): Promise<Season | undefined> {
-    const serie = await this.ormRepository.findOne(id);
+    const serie = await this.ormRepository.findOne(id, {
+      relations: ['serie'],
+    });
     return serie;
   }
 }

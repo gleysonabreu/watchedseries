@@ -92,4 +92,37 @@ describe('Season', () => {
     );
     expect(response.status).toBe(400);
   });
+
+  it('should return an season with uuid valid', async () => {
+    const serie = await factory.factorySerie();
+    const createSerie = container.resolve(CreateSerieService);
+    const createSeason = container.resolve(CreateSeasonService);
+    const serieCreated = await createSerie.execute(serie);
+    const seasonCreated = await createSeason.execute({
+      name: '1° Season',
+      serieId: serieCreated.id,
+    });
+
+    const response = await supertest(app).get(`/season/${seasonCreated.id}`);
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        id: seasonCreated.id,
+        serieId: seasonCreated.serieId,
+        name: seasonCreated.name,
+      }),
+    );
+  });
+
+  it('should not return any season if uuid does not exist', async () => {
+    const response = await supertest(app).get(
+      '/season/61d9b1dc-262e-4e10-aca3-6780c81aa8b1',
+    );
+    expect(response.status).toBe(400);
+  });
+
+  it('should not return any season if uuid is not valid', async () => {
+    const response = await supertest(app).get('/season/invalid-uuid');
+    expect(response.status).toBe(400);
+  });
 });
