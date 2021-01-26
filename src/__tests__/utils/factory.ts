@@ -1,4 +1,4 @@
-import faker from 'faker';
+import faker, { fake } from 'faker';
 
 export default {
   async factorySerie() {
@@ -10,6 +10,14 @@ export default {
       status: 'Finalizada',
       synopsis: faker.lorem.lines(),
       image: 'Image.png',
+    };
+  },
+
+  async factoryEpisode() {
+    return {
+      title: faker.name.findName(),
+      synopsis: faker.lorem.lines(),
+      firstAired: new Date('10-13-2020'),
     };
   },
 };
