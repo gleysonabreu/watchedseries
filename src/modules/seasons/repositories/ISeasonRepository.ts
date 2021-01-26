@@ -6,4 +6,5 @@ export default interface ISeasonRepository {
   delete(season: Season): Promise<void>;
   findById(id: string): Promise<Season | undefined>;
   findAll(): Promise<Season[]>;
+  update(season: Season): Promise<Season>;
 }

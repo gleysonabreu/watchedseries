@@ -1,9 +1,12 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
+
 import CreateSeasonService from '@modules/seasons/services/CreateSeasonService';
 import DeleteSeasonService from '@modules/seasons/services/DeleteSeasonService';
 import FindSeasonByIdService from '@modules/seasons/services/FindSeasonByIdService';
 import FindAllSeasonsService from '@modules/seasons/services/FindAllSeasonsService';
+import UpdateSeasonService from '@modules/seasons/services/UpdateSeasonService';
+
 import seasonView from '../views/season.view';
 
 class SeasonController {
@@ -37,6 +40,16 @@ class SeasonController {
     const seasons = await findAllSeasonsService.execute();
 
     return response.json(seasonView.renderMany(seasons));
+  }
+
+  async update(request: Request, response: Response): Promise<Response> {
+    const { name } = request.body;
+    const { id } = request.params;
+
+    const updateSeasonService = container.resolve(UpdateSeasonService);
+    const seasonUpdated = await updateSeasonService.execute({ id, name });
+
+    return response.json(seasonView.render(seasonUpdated));
   }
 }
 

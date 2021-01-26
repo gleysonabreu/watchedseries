@@ -148,4 +148,48 @@ describe('Season', () => {
       ]),
     );
   });
+
+  it('should update an season with valid name', async () => {
+    const serie = await factory.factorySerie();
+    const createSerie = container.resolve(CreateSerieService);
+    const createSeason = container.resolve(CreateSeasonService);
+    const serieCreated = await createSerie.execute(serie);
+    const seasonCreated = await createSeason.execute({
+      name: '1° Season',
+      serieId: serieCreated.id,
+    });
+
+    const response = await supertest(app)
+      .put(`/season/${seasonCreated.id}`)
+      .send({
+        name: '1° Temporada',
+      });
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        name: '1° Temporada',
+      }),
+    );
+  });
+
+  it('should not update an season without missing fields', async () => {
+    const response = await supertest(app).put(
+      '/season/61d9b1dc-262e-4e10-aca3-6780c81aa8b1',
+    );
+    expect(response.status).toBe(400);
+  });
+
+  it('should not update an season if uuid is invalid', async () => {
+    const response = await supertest(app).put('/season/invalid-uuid');
+    expect(response.status).toBe(400);
+  });
+
+  it('should not update an season if uuid does not exist', async () => {
+    const response = await supertest(app)
+      .put('/season/61d9b1dc-262e-4e10-aca3-6780c81aa8b1')
+      .send({
+        name: '1° Temporada',
+      });
+    expect(response.status).toBe(400);
+  });
 });

@@ -31,6 +31,11 @@ class SeasonRepository implements ISeasonRepository {
     const seasons = await this.ormRepository.find({ relations: ['serie'] });
     return seasons;
   }
+
+  public async update(season: Season): Promise<Season> {
+    const updateSeason = await this.ormRepository.save(season);
+    return updateSeason;
+  }
 }
 
 export default SeasonRepository;
