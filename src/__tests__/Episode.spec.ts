@@ -174,4 +174,69 @@ describe('Episode', () => {
     );
     expect(response.status).toBe(400);
   });
+
+  it('should update an episode with valid information', async () => {
+    const serie = await factory.factorySerie();
+    const episode = await factory.factoryEpisode();
+    const createSerie = container.resolve(CreateSerieService);
+    const createSeason = container.resolve(CreateSeasonService);
+    const createEpisode = container.resolve(CreateEpisodeService);
+    const serieCreated = await createSerie.execute(serie);
+    const seasonCreated = await createSeason.execute({
+      name: '1° Season',
+      serieId: serieCreated.id,
+    });
+    const episodeCreated = await createEpisode.execute({
+      ...episode,
+      seasonId: seasonCreated.id,
+    });
+
+    const response = await supertest(app)
+      .put(`/episode/${episodeCreated.id}`)
+      .send({
+        title: 'New title',
+        synopsis: 'New synopsis',
+        firstAired: '02-20-1997',
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        title: 'New title',
+        synopsis: 'New synopsis',
+        firstAired: '02-20-1997',
+      }),
+    );
+  });
+
+  it('should not update an episode without missing fields', async () => {
+    const response = await supertest(app).put('/episode/:id').send({
+      title: 'New title',
+      synopsis: 'New synopsis',
+    });
+
+    expect(response.status).toBe(400);
+  });
+
+  it('should not update an episode if uuid is invalid', async () => {
+    const response = await supertest(app).put('/episode/invalid-uuid').send({
+      title: 'New title',
+      synopsis: 'New synopsis',
+      firstAired: '02-20-1997',
+    });
+
+    expect(response.status).toBe(400);
+  });
+
+  it('should not update an episode if uuid does not exist', async () => {
+    const response = await supertest(app)
+      .put('/episode/f0608c13-584c-45bd-a7ca-128827aa789e')
+      .send({
+        title: 'New title',
+        synopsis: 'New synopsis',
+        firstAired: '02-20-1997',
+      });
+
+    expect(response.status).toBe(400);
+  });
 });

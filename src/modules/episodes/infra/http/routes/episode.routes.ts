@@ -7,5 +7,6 @@ const episodeController = new EpisodeController();
 episodeRouter.post('/', episodeController.store);
 episodeRouter.delete('/:id', episodeController.delete);
 episodeRouter.get('/:id', episodeController.get);
+episodeRouter.put('/:id', episodeController.update);
 
 export default episodeRouter;

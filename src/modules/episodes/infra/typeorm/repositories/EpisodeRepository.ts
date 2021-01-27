@@ -28,6 +28,11 @@ class EpisodeRepository implements IEpisodeRepository {
   public async delete(episode: Episode): Promise<void> {
     await this.ormRepository.remove(episode);
   }
+
+  public async update(episodeUpdate: Episode): Promise<Episode> {
+    const episode = await this.ormRepository.save(episodeUpdate);
+    return episode;
+  }
 }
 
 export default EpisodeRepository;

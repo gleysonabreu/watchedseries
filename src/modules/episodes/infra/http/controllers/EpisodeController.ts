@@ -4,6 +4,7 @@ import CreateEpisodeService from '@modules/episodes/services/CreateEpisodeServic
 import DeleteEpisodeService from '@modules/episodes/services/DeleteEpisodeService';
 import FindEpisodeByIdService from '@modules/episodes/services/FindEpisodeByIdService';
 
+import UpdateEpisodeService from '@modules/episodes/services/UpdateEpisodeService';
 import seasonView from '../views/season.view';
 
 class EpisodeController {
@@ -34,6 +35,20 @@ class EpisodeController {
     const findEpisodeByIdService = container.resolve(FindEpisodeByIdService);
     const episode = await findEpisodeByIdService.execute({ id });
     return response.json(seasonView.render(episode));
+  }
+
+  async update(request: Request, response: Response): Promise<Response> {
+    const { id } = request.params;
+    const { title, synopsis, firstAired } = request.body;
+
+    const updateEpisodeService = container.resolve(UpdateEpisodeService);
+    const episode = await updateEpisodeService.execute({
+      id,
+      title,
+      synopsis,
+      firstAired,
+    });
+    return response.json(episode);
   }
 }
 
