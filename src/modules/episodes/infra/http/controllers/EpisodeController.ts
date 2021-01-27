@@ -5,7 +5,7 @@ import DeleteEpisodeService from '@modules/episodes/services/DeleteEpisodeServic
 import FindEpisodeByIdService from '@modules/episodes/services/FindEpisodeByIdService';
 
 import UpdateEpisodeService from '@modules/episodes/services/UpdateEpisodeService';
-import seasonView from '../views/season.view';
+import episodeView from '../views/episode.view';
 
 class EpisodeController {
   async store(request: Request, response: Response): Promise<Response> {
@@ -34,7 +34,7 @@ class EpisodeController {
 
     const findEpisodeByIdService = container.resolve(FindEpisodeByIdService);
     const episode = await findEpisodeByIdService.execute({ id });
-    return response.json(seasonView.render(episode));
+    return response.json(episodeView.render(episode));
   }
 
   async update(request: Request, response: Response): Promise<Response> {
