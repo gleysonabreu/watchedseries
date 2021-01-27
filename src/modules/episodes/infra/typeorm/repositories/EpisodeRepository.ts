@@ -18,7 +18,10 @@ class EpisodeRepository implements IEpisodeRepository {
   }
 
   public async findById(id: string): Promise<Episode | undefined> {
-    const episode = await this.ormRepository.findOne(id);
+    const episode = await this.ormRepository.findOne(
+      { id },
+      { relations: ['season', 'season.serie'] },
+    );
     return episode;
   }
 

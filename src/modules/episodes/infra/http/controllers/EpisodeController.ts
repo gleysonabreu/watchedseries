@@ -1,7 +1,10 @@
+import { container } from 'tsyringe';
+import { Request, Response } from 'express';
 import CreateEpisodeService from '@modules/episodes/services/CreateEpisodeService';
 import DeleteEpisodeService from '@modules/episodes/services/DeleteEpisodeService';
-import { Request, Response } from 'express';
-import { container } from 'tsyringe';
+import FindEpisodeByIdService from '@modules/episodes/services/FindEpisodeByIdService';
+
+import seasonView from '../views/season.view';
 
 class EpisodeController {
   async store(request: Request, response: Response): Promise<Response> {
@@ -23,6 +26,14 @@ class EpisodeController {
     const deleteEpisodeService = container.resolve(DeleteEpisodeService);
     await deleteEpisodeService.execute({ id });
     return response.sendStatus(204);
+  }
+
+  async get(request: Request, response: Response): Promise<Response> {
+    const { id } = request.params;
+
+    const findEpisodeByIdService = container.resolve(FindEpisodeByIdService);
+    const episode = await findEpisodeByIdService.execute({ id });
+    return response.json(seasonView.render(episode));
   }
 }
 
