@@ -28,7 +28,7 @@ class Episode {
 
   @ManyToOne(() => Season, season => season.episodes)
   @JoinColumn({ name: 'season_id' })
-  season: Season[];
+  season: Season;
 
   @CreateDateColumn({ name: 'create_at' })
   createAt: Date;

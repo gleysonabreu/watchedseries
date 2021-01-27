@@ -15,6 +15,16 @@ const jestConfig: Config.InitialOptions = {
     '@config/(.*)': '<rootDir>/src/config/$1',
   },
   verbose: true,
+  collectCoverage: true,
+  coverageDirectory: 'src/__tests__/coverage',
+  collectCoverageFrom: [
+    'src/**',
+    '!src/__tests__/**',
+    '!src/shared/infra/typeorm/migrations/*',
+    '!src/shared/@types/**',
+    '!src/modules/**/dtos/*',
+    '!src/modules/**/repositories/*',
+  ],
 };
 
 export default jestConfig;
