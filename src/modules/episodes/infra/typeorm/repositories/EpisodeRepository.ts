@@ -16,6 +16,15 @@ class EpisodeRepository implements IEpisodeRepository {
 
     return epCreated;
   }
+
+  public async findById(id: string): Promise<Episode | undefined> {
+    const episode = await this.ormRepository.findOne(id);
+    return episode;
+  }
+
+  public async delete(episode: Episode): Promise<void> {
+    await this.ormRepository.remove(episode);
+  }
 }
 
 export default EpisodeRepository;

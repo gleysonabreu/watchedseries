@@ -8,6 +8,7 @@ import connect from '@shared/infra/typeorm/connection';
 
 import CreateSerieService from '@modules/series/services/CreateSerieService';
 import CreateSeasonService from '@modules/seasons/services/CreateSeasonService';
+import CreateEpisodeService from '@modules/episodes/services/CreateEpisodeService';
 import truncateTables from './utils/truncateTables';
 import factory from './utils/factory';
 
@@ -84,6 +85,40 @@ describe('Episode', () => {
       synopsis: episode.synopsis,
       firstAired: episode.firstAired,
     });
+    expect(response.status).toBe(400);
+  });
+
+  it('should delete an episode with valid information', async () => {
+    const serie = await factory.factorySerie();
+    const episode = await factory.factoryEpisode();
+    const createSerie = container.resolve(CreateSerieService);
+    const createSeason = container.resolve(CreateSeasonService);
+    const createEpisode = container.resolve(CreateEpisodeService);
+    const serieCreated = await createSerie.execute(serie);
+    const seasonCreated = await createSeason.execute({
+      name: '1° Season',
+      serieId: serieCreated.id,
+    });
+    const episodeCreated = await createEpisode.execute({
+      ...episode,
+      seasonId: seasonCreated.id,
+    });
+
+    const response = await supertest(app).delete(
+      `/episode/${episodeCreated.id}`,
+    );
+    expect(response.status).toBe(204);
+  });
+
+  it('should not delete an episode if uuid is invalid', async () => {
+    const response = await supertest(app).delete('/episode/invalid-uuid');
+    expect(response.status).toBe(400);
+  });
+
+  it('should not delete an episode if uuid does not exist', async () => {
+    const response = await supertest(app).delete(
+      '/episode/f0608c13-584c-45bd-a7ca-128827aa789e',
+    );
     expect(response.status).toBe(400);
   });
 });
