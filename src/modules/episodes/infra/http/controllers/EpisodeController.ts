@@ -48,7 +48,7 @@ class EpisodeController {
       synopsis,
       firstAired,
     });
-    return response.json(episode);
+    return response.json(episodeView.render(episode));
   }
 }
 
