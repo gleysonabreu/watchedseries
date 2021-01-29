@@ -8,6 +8,9 @@ import SeasonRepository from '@modules/seasons/infra/typeorm/repositories/Season
 import EpisodeRepository from '@modules/episodes/infra/typeorm/repositories/EpisodeRepository';
 import IEpisodeRepository from '@modules/episodes/repositories/IEpisodeRepository';
 
+import IUserRepository from '@modules/users/repositories/IUserRepository';
+import UserRepository from '@modules/users/infra/typeorm/repositories/UserRepository';
+
 container.registerSingleton<ISerieRepository>(
   'SerieRepository',
   SerieRepository,
@@ -22,3 +25,5 @@ container.registerSingleton<IEpisodeRepository>(
   'EpisodeRepository',
   EpisodeRepository,
 );
+
+container.registerSingleton<IUserRepository>('UserRepository', UserRepository);

@@ -20,4 +20,14 @@ export default {
       firstAired: new Date('10-13-2020'),
     };
   },
+
+  async factoryUser() {
+    return {
+      firstName: faker.name.findName(),
+      lastName: faker.name.findName(),
+      email: 'umemail@gmail.com',
+      username: faker.internet.userName(),
+      password: String(faker.internet.password()),
+    };
+  },
 };
