@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import UserSerie from './UserSerie';
 
 @Entity('users_watched_episodes')
 class UserEposiode {
@@ -16,7 +17,7 @@ class UserEposiode {
 
   @ManyToOne(() => Episode, { eager: true })
   @JoinColumn({ name: 'episode_id' })
-  episodes: Episode[];
+  episode: Episode;
 
   @Column({ name: 'user_id' })
   userId: string;

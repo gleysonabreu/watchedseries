@@ -1,16 +1,16 @@
 import {
   BaseEntity,
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import Serie from '@modules/series/infra/typeorm/entities/Serie';
-import Episode from '@modules/episodes/infra/typeorm/entities/Episode';
+
+import bcrypt from 'bcrypt';
+import config from '@config/crypto';
 
 @Entity('users')
 class User extends BaseEntity {
@@ -18,7 +18,7 @@ class User extends BaseEntity {
   id: string;
 
   @Column({ name: 'first_name' })
-  firtName: string;
+  firstName: string;
 
   @Column({ name: 'last_name' })
   lastName: string;
@@ -31,6 +31,16 @@ class User extends BaseEntity {
 
   @Column()
   password: string;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  hashPassword(): void {
+    this.password = bcrypt.hashSync(this.password, config.hashSaltRounds);
+  }
+
+  checkPassword(password: string): boolean {
+    return bcrypt.compareSync(password, this.password);
+  }
 
   @CreateDateColumn({ name: 'create_at' })
   createAt: Date;
