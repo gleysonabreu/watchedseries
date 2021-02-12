@@ -11,6 +11,12 @@ import IEpisodeRepository from '@modules/episodes/repositories/IEpisodeRepositor
 import IUserRepository from '@modules/users/repositories/IUserRepository';
 import UserRepository from '@modules/users/infra/typeorm/repositories/UserRepository';
 
+import IUserSerieRepository from '@modules/users/repositories/IUserSerieRepository';
+import UserSerieRepository from '@modules/users/infra/typeorm/repositories/UserSerieRepository';
+
+import IUserEpisodeRepository from '@modules/users/repositories/IUserEpisodeRepository';
+import UserEpisodeRepository from '@modules/users/infra/typeorm/repositories/UserEpisodeRepository';
+
 container.registerSingleton<ISerieRepository>(
   'SerieRepository',
   SerieRepository,
@@ -27,3 +33,13 @@ container.registerSingleton<IEpisodeRepository>(
 );
 
 container.registerSingleton<IUserRepository>('UserRepository', UserRepository);
+
+container.registerSingleton<IUserSerieRepository>(
+  'UserSerieRepository',
+  UserSerieRepository,
+);
+
+container.registerSingleton<IUserEpisodeRepository>(
+  'UserEpisodeRepository',
+  UserEpisodeRepository,
+);
