@@ -44,8 +44,15 @@ class SerieController {
   }
 
   async index(request: Request, response: Response): Promise<Response> {
+    const { page = 1, perPage } = request.query;
+
     const findAllSeriesService = container.resolve(FindAllSeriesService);
-    const series = await findAllSeriesService.execute();
+    const { series, totalCount } = await findAllSeriesService.execute({
+      page: Number(page),
+      perPage: Number(perPage),
+    });
+
+    response.header('X-Total-Count', `${totalCount}`);
     return response.status(200).json(serieView.renderMany(series));
   }
 

@@ -31,8 +31,11 @@ class SerieRepository implements ISerieRepository {
     await this.ormRepository.remove(serie);
   }
 
-  public async findAll(): Promise<Serie[]> {
-    const series = await this.ormRepository.find();
+  public async findAll(skip: number = 0, take: number = 0): Promise<Serie[]> {
+    const series = await this.ormRepository.find({
+      skip,
+      take,
+    });
     return series;
   }
 
