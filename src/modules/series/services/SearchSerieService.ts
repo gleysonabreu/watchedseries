@@ -4,37 +4,42 @@ import Serie from '../infra/typeorm/entities/Serie';
 import ISerieRepository from '../repositories/ISerieRepository';
 
 interface IRequest {
+  title: string;
   page: number;
   perPage: number;
 }
 
 interface IResponse {
   series: Serie[];
-  totalCount: number;
+  totalSeries: number;
 }
 
 @injectable()
-class FindAllSeriesService {
+class SearchSerieService {
   constructor(
     @inject('SerieRepository')
     private serieRepository: ISerieRepository,
   ) {}
 
-  public async execute({ page, perPage }: IRequest): Promise<IResponse> {
+  async execute({ title, page, perPage }: IRequest): Promise<IResponse> {
     perPage = perPage || Number(process.env.WATCHEDSERIES_POST_PER_PAGE);
+
     const schema = Yup.object().shape({
+      title: Yup.string().required().min(1),
       page: Yup.number().required(),
       perPage: Yup.number().required(),
     });
-    await schema.validate({ page, perPage }, { abortEarly: false });
+    await schema.validate({ title, page, perPage }, { abortEarly: false });
 
-    const take = perPage;
     const skip = (page - 1) * perPage;
-    const totalCount = (await this.serieRepository.findAll()).length;
-
-    const series = await this.serieRepository.findAll(skip, take);
-    return { series, totalCount };
+    const totalSeries = (await this.serieRepository.search({ title })).length;
+    const series = await this.serieRepository.search({
+      take: perPage,
+      skip,
+      title,
+    });
+    return { series, totalSeries };
   }
 }
 
-export default FindAllSeriesService;
+export default SearchSerieService;

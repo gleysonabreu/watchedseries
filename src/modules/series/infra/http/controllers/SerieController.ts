@@ -6,6 +6,7 @@ import DeleteSerieService from '@modules/series/services/DeleteSerieService';
 import FindAllSeriesService from '@modules/series/services/FindAllSeriesService';
 import FindSerieByIdService from '@modules/series/services/FindSerieByIdService';
 import UpdateSerieService from '@modules/series/services/UpdateSerieService';
+import SearchSerieService from '@modules/series/services/SearchSerieService';
 import serieView from '../views/serie.view';
 
 class SerieController {
@@ -88,6 +89,21 @@ class SerieController {
     });
 
     return response.status(200).json(serieView.render(updateSerie));
+  }
+
+  async search(request: Request, response: Response): Promise<Response> {
+    const { title } = request.params;
+    const { page = 1, perPage } = request.query;
+
+    const searchSerieService = container.resolve(SearchSerieService);
+    const { series, totalSeries } = await searchSerieService.execute({
+      title,
+      page: Number(page),
+      perPage: Number(perPage),
+    });
+
+    response.header('X-Total-Count', `${totalSeries}`);
+    return response.json(serieView.renderMany(series));
   }
 }
 
