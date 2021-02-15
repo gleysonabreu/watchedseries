@@ -7,7 +7,7 @@ export default interface ISerieRepository {
   findByTitle(title: string): Promise<Serie | undefined>;
   findById(id: string): Promise<Serie | undefined>;
   remove(serie: Serie): Promise<void>;
-  findAll(skip?: number, take?: number): Promise<Serie[]>;
+  findAll(): Promise<Serie[]>;
   update(serie: Serie): Promise<Serie>;
   search(searchSerie: ISearchSerieDTO): Promise<Serie[]>;
 }
