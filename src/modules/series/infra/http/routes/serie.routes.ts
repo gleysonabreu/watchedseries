@@ -18,5 +18,6 @@ serieRouter.delete('/:id', serieController.delete);
 serieRouter.get('/', serieController.index);
 serieRouter.get('/:id', serieController.get);
 serieRouter.put('/:id', serieController.update);
+serieRouter.get('/search/:title', serieController.search);
 
 export default serieRouter;

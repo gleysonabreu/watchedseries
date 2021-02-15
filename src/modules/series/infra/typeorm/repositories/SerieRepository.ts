@@ -1,6 +1,7 @@
 import ICreateSerieDTO from '@modules/series/dtos/ICreateSerieDTO';
+import ISearchSerieDTO from '@modules/series/dtos/ISearchSerieDTO';
 import ISerieRepository from '@modules/series/repositories/ISerieRepository';
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Repository, Like } from 'typeorm';
 import Serie from '../entities/Serie';
 
 class SerieRepository implements ISerieRepository {
@@ -42,6 +43,17 @@ class SerieRepository implements ISerieRepository {
   public async update(serie: Serie): Promise<Serie> {
     const updateSerie = await this.ormRepository.save(serie);
     return updateSerie;
+  }
+
+  async search({ title, skip, take }: ISearchSerieDTO): Promise<Serie[]> {
+    const series = await this.ormRepository.find({
+      take,
+      skip,
+      where: {
+        title: Like(`%${title}%`),
+      },
+    });
+    return series;
   }
 }
 
