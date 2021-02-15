@@ -5,6 +5,8 @@ import DeleteEpisodeService from '@modules/episodes/services/DeleteEpisodeServic
 import FindEpisodeByIdService from '@modules/episodes/services/FindEpisodeByIdService';
 
 import UpdateEpisodeService from '@modules/episodes/services/UpdateEpisodeService';
+import FindAllEpisodesService from '@modules/episodes/services/FindAllEpisodesService';
+import SearchEpisodeService from '@modules/episodes/services/SearchEpisodeService';
 import episodeView from '../views/episode.view';
 
 class EpisodeController {
@@ -49,6 +51,33 @@ class EpisodeController {
       firstAired,
     });
     return response.json(episodeView.render(episode));
+  }
+
+  async index(request: Request, response: Response): Promise<Response> {
+    const { page = 1, perPage } = request.query;
+
+    const findAllEpisodesService = container.resolve(FindAllEpisodesService);
+    const { episodes, totalEpisodes } = await findAllEpisodesService.execute({
+      page: Number(page),
+      perPage: Number(perPage),
+    });
+
+    response.header('X-Total-Count', `${totalEpisodes}`);
+    return response.json(episodeView.renderMany(episodes));
+  }
+
+  async search(request: Request, response: Response): Promise<Response> {
+    const { page = 1, perPage, title } = request.query;
+
+    const searchEpisodeService = container.resolve(SearchEpisodeService);
+    const { episodes, totalEpisodes } = await searchEpisodeService.execute({
+      page: Number(page),
+      perPage: Number(perPage),
+      title: String(title),
+    });
+
+    response.header('X-Total-Count', `${totalEpisodes}`);
+    return response.json(episodeView.renderMany(episodes));
   }
 }
 

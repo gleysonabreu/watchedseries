@@ -8,5 +8,6 @@ episodeRouter.post('/', episodeController.store);
 episodeRouter.delete('/:id', episodeController.delete);
 episodeRouter.get('/:id', episodeController.get);
 episodeRouter.put('/:id', episodeController.update);
+episodeRouter.get('/', episodeController.index);
 
 export default episodeRouter;

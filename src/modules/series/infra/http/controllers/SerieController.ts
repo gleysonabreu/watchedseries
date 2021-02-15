@@ -92,12 +92,11 @@ class SerieController {
   }
 
   async search(request: Request, response: Response): Promise<Response> {
-    const { title } = request.params;
-    const { page = 1, perPage } = request.query;
+    const { page = 1, perPage, title } = request.query;
 
     const searchSerieService = container.resolve(SearchSerieService);
     const { series, totalSeries } = await searchSerieService.execute({
-      title,
+      title: String(title),
       page: Number(page),
       perPage: Number(perPage),
     });
