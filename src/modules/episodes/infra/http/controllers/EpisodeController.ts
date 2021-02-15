@@ -6,6 +6,7 @@ import FindEpisodeByIdService from '@modules/episodes/services/FindEpisodeByIdSe
 
 import UpdateEpisodeService from '@modules/episodes/services/UpdateEpisodeService';
 import FindAllEpisodesService from '@modules/episodes/services/FindAllEpisodesService';
+import SearchEpisodeService from '@modules/episodes/services/SearchEpisodeService';
 import episodeView from '../views/episode.view';
 
 class EpisodeController {
@@ -59,6 +60,20 @@ class EpisodeController {
     const { episodes, totalEpisodes } = await findAllEpisodesService.execute({
       page: Number(page),
       perPage: Number(perPage),
+    });
+
+    response.header('X-Total-Count', `${totalEpisodes}`);
+    return response.json(episodeView.renderMany(episodes));
+  }
+
+  async search(request: Request, response: Response): Promise<Response> {
+    const { page = 1, perPage, title } = request.query;
+
+    const searchEpisodeService = container.resolve(SearchEpisodeService);
+    const { episodes, totalEpisodes } = await searchEpisodeService.execute({
+      page: Number(page),
+      perPage: Number(perPage),
+      title: String(title),
     });
 
     response.header('X-Total-Count', `${totalEpisodes}`);

@@ -1,6 +1,7 @@
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Repository, Like } from 'typeorm';
 import IEpisodeRepository from '@modules/episodes/repositories/IEpisodeRepository';
 import ICreateEpisodeDTO from '@modules/episodes/dtos/ICreateEpisodeDTO';
+import ISearchEpisodeDTO from '@modules/episodes/dtos/ISearchEpisodeDTO';
 import Episode from '../entities/Episode';
 
 class EpisodeRepository implements IEpisodeRepository {
@@ -38,6 +39,22 @@ class EpisodeRepository implements IEpisodeRepository {
     const episodes = await this.ormRepository.find({
       skip,
       take,
+      relations: ['season', 'season.serie'],
+    });
+    return episodes;
+  }
+
+  async search({
+    take = 0,
+    skip = 0,
+    title,
+  }: ISearchEpisodeDTO): Promise<Episode[]> {
+    const episodes = await this.ormRepository.find({
+      take,
+      skip,
+      where: {
+        title: Like(`%${title}%`),
+      },
       relations: ['season', 'season.serie'],
     });
     return episodes;
