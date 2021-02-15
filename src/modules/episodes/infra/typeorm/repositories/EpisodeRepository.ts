@@ -33,6 +33,15 @@ class EpisodeRepository implements IEpisodeRepository {
     const episode = await this.ormRepository.save(episodeUpdate);
     return episode;
   }
+
+  async findAll(skip: number = 0, take: number = 0): Promise<Episode[]> {
+    const episodes = await this.ormRepository.find({
+      skip,
+      take,
+      relations: ['season', 'season.serie'],
+    });
+    return episodes;
+  }
 }
 
 export default EpisodeRepository;

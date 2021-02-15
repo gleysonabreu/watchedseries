@@ -6,4 +6,5 @@ export default interface IEpisodeRepository {
   delete(episode: Episode): Promise<void>;
   findById(id: string): Promise<Episode | undefined>;
   update(episode: Episode): Promise<Episode>;
+  findAll(skip?: number, take?: number): Promise<Episode[]>;
 }
