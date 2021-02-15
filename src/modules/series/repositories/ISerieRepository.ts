@@ -1,5 +1,4 @@
 import ICreateSerieDTO from '../dtos/ICreateSerieDTO';
-import ISearchSerieDTO from '../dtos/ISearchSerieDTO';
 import Serie from '../infra/typeorm/entities/Serie';
 
 export default interface ISerieRepository {
@@ -9,5 +8,4 @@ export default interface ISerieRepository {
   remove(serie: Serie): Promise<void>;
   findAll(): Promise<Serie[]>;
   update(serie: Serie): Promise<Serie>;
-  search(searchSerie: ISearchSerieDTO): Promise<Serie[]>;
 }
