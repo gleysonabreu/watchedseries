@@ -30,9 +30,16 @@ class UserSerieController {
 
   async index(request: Request, response: Response): Promise<Response> {
     const { userId } = request;
+    const { page = 1, perPage } = request.query;
 
     const findAllUserSerie = container.resolve(FindAllUserSerieService);
-    const userSeries = await findAllUserSerie.execute({ userId });
+    const { totalSeries, ...userSeries } = await findAllUserSerie.execute({
+      userId,
+      page: Number(page),
+      perPage: Number(perPage),
+    });
+
+    response.header('X-Total-Count', `${totalSeries}`);
     return response.json(userSerieView.renderMany(userSeries));
   }
 

@@ -34,8 +34,18 @@ class UserSerieRepository implements IUserSerieRepository {
     return userSerie;
   }
 
-  public async findAll(userId: string): Promise<UserSerie[]> {
-    const userSeries = await this.ormRepository.find({ userId });
+  public async findAll(
+    userId: string,
+    take = 0,
+    skip = 0,
+  ): Promise<UserSerie[]> {
+    const userSeries = await this.ormRepository.find({
+      take,
+      skip,
+      where: {
+        userId,
+      },
+    });
     return userSeries;
   }
 }
