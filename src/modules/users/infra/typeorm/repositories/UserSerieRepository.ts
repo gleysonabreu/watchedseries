@@ -1,6 +1,7 @@
 import ICreateUserSerieDTO from '@modules/users/dtos/ICreateUserSerieDTO';
+import ISearchUserSerieDTO from '@modules/users/dtos/ISearchUserSerieDTO';
 import IUserSerieRepository from '@modules/users/repositories/IUserSerieRepository';
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Repository, Like, WhereExpression } from 'typeorm';
 import UserSerie from '../entities/UserSerie';
 
 class UserSerieRepository implements IUserSerieRepository {
@@ -47,6 +48,26 @@ class UserSerieRepository implements IUserSerieRepository {
       },
     });
     return userSeries;
+  }
+
+  async search({
+    title,
+    take = 0,
+    skip = 0,
+    userId,
+  }: ISearchUserSerieDTO): Promise<UserSerie[]> {
+    const series = await this.ormRepository.find({
+      join: { alias: 'userSerie', innerJoin: { serie: 'userSerie.serie' } },
+      take,
+      skip,
+      where: (qb: WhereExpression) => {
+        qb.where({
+          userId,
+        }).andWhere('serie.title LIKE :title', { title: `%${title}%` });
+      },
+    });
+
+    return series;
   }
 }
 

@@ -1,4 +1,5 @@
 import ICreateUserSerieDTO from '../dtos/ICreateUserSerieDTO';
+import ISearchUserSerieDTO from '../dtos/ISearchUserSerieDTO';
 import UserSerie from '../infra/typeorm/entities/UserSerie';
 
 export default interface IUserSerieRepository {
@@ -9,4 +10,5 @@ export default interface IUserSerieRepository {
     serieId: string,
   ): Promise<UserSerie | undefined>;
   findAll(userId: string, take?: number, skip?: number): Promise<UserSerie[]>;
+  search(userSerieSearch: ISearchUserSerieDTO): Promise<UserSerie[]>;
 }

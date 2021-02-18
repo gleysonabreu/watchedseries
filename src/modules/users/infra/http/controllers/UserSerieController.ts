@@ -4,6 +4,7 @@ import CreateUserSerieService from '@modules/users/services/CreateUserSerieServi
 import DeleteUserSerieService from '@modules/users/services/DeleteUserSerieService';
 import FindAllUserSerieService from '@modules/users/services/FindAllUserSerieService';
 import FindByUserIdAndSerieId from '@modules/users/services/FindByUserIdAndSerieId';
+import SearchUserSerieService from '@modules/users/services/SearchUserSerieService';
 import userSerieView from '../views/userSerie.view';
 
 class UserSerieController {
@@ -53,6 +54,23 @@ class UserSerieController {
       serieId,
     });
     return response.json(userSerieView.render({ userSerie, userEpisodes }));
+  }
+
+  async search(request: Request, response: Response): Promise<Response> {
+    const { userId } = request;
+    const { page = 1, perPage, title } = request.query;
+
+    const searchUserSerieService = container.resolve(SearchUserSerieService);
+    const { totalSeries, ...userSeries } = await searchUserSerieService.execute(
+      {
+        userId,
+        page: Number(page),
+        title: String(title),
+        perPage: Number(perPage),
+      },
+    );
+    response.header('X-Total-Count', `${totalSeries}`);
+    return response.json(userSerieView.renderMany(userSeries));
   }
 }
 
