@@ -1,14 +1,15 @@
 import { inject, injectable } from 'tsyringe';
 import * as Yup from 'yup';
-import UserSerie from '../infra/typeorm/entities/UserSerie';
 import UserEpisode from '../infra/typeorm/entities/UserEpisode';
+import UserSerie from '../infra/typeorm/entities/UserSerie';
 import IUserEpisodeRepository from '../repositories/IUserEpisodeRepository';
 import IUserSerieRepository from '../repositories/IUserSerieRepository';
 
 interface IRequest {
   userId: string;
-  perPage: number;
   page: number;
+  perPage: number;
+  title: string;
 }
 
 interface IResponse {
@@ -18,39 +19,46 @@ interface IResponse {
 }
 
 @injectable()
-class FindAllUserSerieService {
+class SearchUserSerieService {
   constructor(
     @inject('UserSerieRepository')
     private userSerieRepository: IUserSerieRepository,
-
     @inject('UserEpisodeRepository')
     private userEpisodeRepository: IUserEpisodeRepository,
   ) {}
 
-  public async execute({
+  async execute({
     userId,
-    perPage,
     page,
+    perPage,
+    title,
   }: IRequest): Promise<IResponse> {
     perPage = perPage || Number(process.env.WATCHEDSERIES_POST_PER_PAGE);
     const schema = Yup.object().shape({
       userId: Yup.string().uuid().required(),
-      page: Yup.number().required(),
       perPage: Yup.number().required(),
+      page: Yup.number().required(),
+      title: Yup.string().required(),
     });
-    await schema.validate({ userId, page, perPage }, { abortEarly: false });
+    await schema.validate(
+      { userId, page, perPage, title },
+      { abortEarly: false },
+    );
 
     const skip = (page - 1) * perPage;
-    const totalSeries = (await this.userSerieRepository.findAll(userId)).length;
-    const userSeries = await this.userSerieRepository.findAll(
+    const totalSeries = (
+      await this.userSerieRepository.search({ title, userId })
+    ).length;
+    const userSeries = await this.userSerieRepository.search({
+      title,
       userId,
-      perPage,
       skip,
-    );
+      take: perPage,
+    });
     const userEpisodes = await this.userEpisodeRepository.findAll(userId);
 
     return { userSeries, userEpisodes, totalSeries };
   }
 }
 
-export default FindAllUserSerieService;
+export default SearchUserSerieService;
